@@ -184,7 +184,7 @@ TDeviceEject::TDeviceEject(BOOL AVerbose,BOOL ADebug)
     DeviceEjectErrorCode = deec_UnsupportedOS;
   else
     {
-      const PCHAR LibFileName = "setupapi.dll";
+      PCSTR LibFileName = "setupapi.dll";
       Lib = GetModuleHandle(LibFileName);
       if (!Lib)
         {
@@ -257,7 +257,7 @@ BOOL TDeviceEject::GetDriveDeviceId(PCHAR DriveSpec,PCHAR DeviceId,DWORD MaxDevi
                         break;
                       if (c == '#')
                         c = '\\';
-                      if ((p2 - DeviceId) < (MaxDeviceIdSize - 1))
+                      if ((p2 - DeviceId) < ptrdiff_t(MaxDeviceIdSize - 1))
                         *p2++ = c;
                     }
                   *p2 = '\0';
@@ -378,8 +378,8 @@ TDeviceEject::TDeviceEjectErrorCode TDeviceEject::EnumDevices(PEnumDeviceInfo Pa
 
                           if (Debug)
                             {
-                              printf(" DevInst: %u",ThisDevInst);
-                              printf(" Status: 0x%X ",Status);
+                              printf(" DevInst: %u",uint(ThisDevInst));
+                              printf(" Status: 0x%X ",uint(Status));
                             }
 
                           if (FriendlyName[0])
@@ -388,7 +388,7 @@ TDeviceEject::TDeviceEjectErrorCode TDeviceEject::EnumDevices(PEnumDeviceInfo Pa
                           if (Status & DN_REMOVABLE)
                             printf(" [REMOVEABLE]");
                           if (ProblemNumber)
-                            printf(" ProblemNumber: %u",ProblemNumber);
+                            printf(" ProblemNumber: %u",uint(ProblemNumber));
 
                           printf("\n");
                         }
@@ -470,7 +470,7 @@ TDeviceEject::TDeviceEjectErrorCode TDeviceEject::EnumDevices(PEnumDeviceInfo Pa
                                     printf("ok.\n");
                                   else
                                     {
-                                      printf("FAILED (%u,%u)\n",r,VetoType);
+                                      printf("FAILED (%u,%u)\n",uint(r),uint(VetoType));
                                       if (r == CR_REMOVE_VETOED)
                                         {
                                           Result = deec_ErrorEjectVetoed;
@@ -642,7 +642,7 @@ int main(int argc,char *argv[])
                     break;
 
                   default:
-                    printf("Error in device eject, error code %u,%u!\n",DeviceEject->DeviceEjectErrorCode,DeviceEject->NativeErrorCode);
+                    printf("Error in device eject, error code %u,%u!\n",uint(DeviceEject->DeviceEjectErrorCode),uint(DeviceEject->NativeErrorCode));
                     break;
                 }
             }
@@ -654,7 +654,7 @@ int main(int argc,char *argv[])
               if (ErrorCode == TDeviceEject::deec_Ok)
                 {
                   if (EjectDevSpec[0])
-                    printf("%u device(s) ejected.\n",EjectedCount);
+                    printf("%u device(s) ejected.\n",uint(EjectedCount));
                 }
               else
                 {
@@ -662,23 +662,23 @@ int main(int argc,char *argv[])
                   switch(ErrorCode)
                     {
                       case TDeviceEject::deec_DeviceNotFound:
-                        printf("Error ejecting device %s, not found (%u,%u)!\n",EjectDevSpec,ErrorCode,NativeErrorCode);
+                        printf("Error ejecting device %s, not found (%u,%u)!\n",EjectDevSpec,uint(ErrorCode),uint(NativeErrorCode));
                         break;
 
                       case TDeviceEject::deec_DeviceNotRemovable:
-                        printf("Error ejecting device %s, not removable (%u,%u)!\n",EjectDevSpec,ErrorCode,NativeErrorCode);
+                        printf("Error ejecting device %s, not removable (%u,%u)!\n",EjectDevSpec,uint(ErrorCode),uint(NativeErrorCode));
                         break;
 
                       case TDeviceEject::deec_DeviceHasProblem:
-                        printf("Error ejecting device %s, has problem (%u,%u)!\n",EjectDevSpec,ErrorCode,NativeErrorCode);
+                        printf("Error ejecting device %s, has problem (%u,%u)!\n",EjectDevSpec,uint(ErrorCode),uint(NativeErrorCode));
                         break;
 
                       case TDeviceEject::deec_ErrorEjectVetoed:
-                        printf("Error ejecting device %s, vetoed (%u,%u)!\n",EjectDevSpec,ErrorCode,NativeErrorCode);
+                        printf("Error ejecting device %s, vetoed (%u,%u)!\n",EjectDevSpec,uint(ErrorCode),uint(NativeErrorCode));
                         break;
 
                       default:
-                        printf("Error ejecting device %s, error code %u,%u!\n",EjectDevSpec,ErrorCode,NativeErrorCode);
+                        printf("Error ejecting device %s, error code %u,%u!\n",EjectDevSpec,uint(ErrorCode),uint(NativeErrorCode));
                         break;
                     }
                 }
